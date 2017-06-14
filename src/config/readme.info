@@ -10,8 +10,7 @@ ETL操作简明
 WEB端界面
 	http://localhost:8080/etl
 	admin/1
-
-http://132.228.68.41:8080/etl_new/main.jsp 
+	http://132.228.68.41:8080/etl_new/main.jsp 
 
 首页
 首页可以发布些更新公告，显示当前主节点，以及清除缓存动作
