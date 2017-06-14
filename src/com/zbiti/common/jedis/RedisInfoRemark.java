@@ -7,6 +7,7 @@ import java.util.Map;
 import com.zbiti.common.StringUtil;
 import com.zbiti.common.stream.BufferedRandomAccessFile;
 
+@SuppressWarnings("all")
 public class RedisInfoRemark {
 
 
