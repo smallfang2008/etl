@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zbiti.etl.core.dao.StepTypeDao">
+	
+	<select id="findstepType" parameterType="java.util.Map" resultMap="StepType.StepTypeResultMap" >
+		select * from ETL_STEP_TYPE
+	</select>
+	
+</mapper>

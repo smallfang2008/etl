@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.SourceFileDirDao">
+ 
+ <select id="getSeq" parameterType="String" resultType="String">
+ 	select ETL_SOURCE_FILE_DIRECTORY_seq.nextval from dual
+ </select>
+ 
+  <insert id="save" parameterType="com.zbiti.etl.extend.vo.SourceFileDir">
+  	  insert into ETL_SOURCE_FILE_DIR (SOURCE_FILE_DIR_ID,STEP_ID,SERVER_NAME,FILE_PATH,FILE_PATH_PATTERN,START_DATE,FILE_PATTERN,CREATE_DATE)
+      values (ETL_SOURCE_FILE_DIRECTORY_seq.nextval, #{step.stepId}, #{serverName},#{filePath}, #{filePathPattern}, #{startDate}, #{filePattern},sysdate)
+  </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_SOURCE_FILE_DIR WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <delete id="deleteGetDir" parameterType="String">
+ 	DELETE FROM ETL_SOURCE_FILE_DIR WHERE SOURCE_FILE_DIR_ID in (${dirId})
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.SourceFileDir">
+	update ETL_SOURCE_FILE_DIR
+		set SERVER_NAME=#{serverName},FILE_PATH=#{filePath},FILE_PATTERN=#{filePattern},
+			FILE_PATH_PATTERN=#{filePathPattern},START_DATE=#{startDate}
+		where SOURCE_FILE_DIR_ID=#{sourceFileDirId}
+ </update>
+ 
+ <select id="listSourceFileDirByStepId" parameterType="String" resultMap="SourceFileDir.SourceFileDirResultMap">
+ SELECT 
+       SOURCE_FILE_DIR_ID,STEP_ID,SERVER_NAME,FILE_PATH,
+		START_DATE,FILE_PATTERN,CREATE_DATE,FILE_PATH_PATTERN
+ FROM ETL_SOURCE_FILE_DIR WHERE STEP_ID = #{stepId}
+ </select>
+</mapper>

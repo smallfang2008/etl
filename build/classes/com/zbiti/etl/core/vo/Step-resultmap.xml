@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Step">
+	<resultMap id="StepResultMap" type="com.zbiti.etl.core.vo.Step" >
+		<id property="stepId" column="STEP_ID"/>
+		
+		<result property="stepName" column="STEP_NAME"/>
+		<result property="runPositionType" column="RUN_POSITION_TYPE"/>
+		<result property="step" column="STEP"/>
+		<result property="previousStep" column="PREVIOUS_STEP"/>
+		<result property="createOp" column="CREATE_OP"/>
+		<result property="modifyOp" column="MODIFY_OP"/>
+		<result property="createDate" column="CREATE_DATE"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="threadNum" column="THREAD_NUM"/>
+		<result property="memMax" column="MEM_MAX"/>
+		<result property="memMin" column="MEM_MIN"/>
+		<result property="runType" column="RUN_TYPE"/>
+		<result property="isWaitPre" column="IS_WAIT_PRE"/>
+		<result property="runPosition" column="RUNPOSITION"/>
+
+		<association property="stepType" resultMap="StepType.StepTypeResultMap" />
+		<association property="serverCluster" resultMap="ServerCluster.ServerClusterResultMap" />
+		<association property="scene" resultMap="Scene.SceneResultMap" />
+		<association property="node" resultMap="Node.NodeResultMap" />
+	</resultMap>
+</mapper>

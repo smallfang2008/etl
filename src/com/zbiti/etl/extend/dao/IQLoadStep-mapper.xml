@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.IQLoadStepDao">
+ 
+ <select id="getById" parameterType="String" resultMap="IQLoadStep.IQLoadStepResultMap">
+	 select ei.step_id,ei.server_name,ei.prepare_sql,ei.post_sql,ei.table_name,ei.columns,ei.encoding from ETL_IQ_LOAD_STEP ei
+	 WHERE ei.STEP_ID = #{id}
+ </select>
+ 
+ <insert id="save" parameterType="com.zbiti.etl.extend.vo.IQLoadStep">
+		insert into ETL_IQ_LOAD_STEP (STEP_ID,SERVER_NAME,PREPARE_SQL,TABLE_NAME,COLUMNS,POST_SQL,ENCODING)
+			values (#{stepId}, #{serverName}, #{prepareSql}, #{tableName}, #{columns}, #{postSql},#{encoding})
+ </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_IQ_LOAD_STEP WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.IQLoadStep">
+	update ETL_IQ_LOAD_STEP
+		set SERVER_NAME=#{serverName},PREPARE_SQL=#{prepareSql},TABLE_NAME=#{tableName},
+			COLUMNS=#{columns},POST_SQL=#{postSql},ENCODING=#{encoding}
+		where STEP_ID=#{stepId}
+ </update> 
+
+</mapper>

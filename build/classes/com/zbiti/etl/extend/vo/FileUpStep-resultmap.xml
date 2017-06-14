@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FileUpStep">
+	<resultMap id="FileUpStepResultMap" extends="Step.StepResultMap" type="com.zbiti.etl.extend.vo.FileUpStep" >
+		<result property="resourceName" column="RESOURCE_NAME"/>
+		<result property="upPath" column="UP_PATH"/>
+		<result property="upPathOffset" column="UP_PATH_OFFSET"/>
+		<result property="isGz" column="IS_GZ"/>
+		<result property="isAppendTime" column="IS_APPEND_TIME"/>
+		<result property="appendTimePattern" column="APPEND_TIME_PATTERN"/>
+		<result property="appendTimeOffset" column="APPEND_TIME_OFFSET"/>
+	</resultMap>
+</mapper>

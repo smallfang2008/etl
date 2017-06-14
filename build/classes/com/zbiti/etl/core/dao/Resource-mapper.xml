@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+<mapper namespace="com.zbiti.etl.core.dao.ResourceDao">
+ 	<sql id="resourceColumns">
+ 		re.RESOURCE_ID,
+ 		re.RESOURCE_TYPE_ID,
+ 		reType.RESOURCE_TYPE_NAME,
+ 		re.RESOURCE_NAME,
+ 		re.URI,
+ 		re.PORT,
+ 		re.SERVICE_NAME,
+ 		re.PASSWORD,
+ 		re.DRIVER,
+ 		re.USERNAME,
+ 		re.HOST_NAME,
+ 		re.DB_SID,
+ 		re.RESOURCE_MODE,
+ 		re.MAX_ACTIVE,
+ 		re.MAX_IDLE,
+ 		re.MAX_WAIT,
+ 		re.CREATE_OP,
+ 		re.MODIFY_OP,
+ 		re.CREATE_DATE,
+ 		re.MODIFY_DATE,
+ 		re.VERSION
+ 	</sql>
+ 	
+	<!-- id和mapper接口中的方法名对应 -->
+	<!-- 根据节点编码查找节点,获取节点的同时要附带获取节点提供的容器Node2Container -->
+	<select id="getById" parameterType="java.util.Map" resultMap="Resource.ResourceResultMap" >
+	select 
+	<include refid="resourceColumns"/>
+	from ETL_RESOURCE re
+	left join Etl_Resource_Type reType on re.RESOURCE_TYPE_ID = reType.RESOURCE_TYPE_ID
+	where re.RESOURCE_ID = #{resourceId}
+	</select>
+	
+	
+	<select id="selectResourceListPage" parameterType="java.util.Map" resultMap="Resource.ResourceResultMap" >
+	select 
+	<include refid="resourceColumns"/>
+	from ETL_RESOURCE re
+	left join Etl_Resource_Type reType on re.RESOURCE_TYPE_ID = reType.RESOURCE_TYPE_ID
+	where 1=1
+	<if test="resourceType!=null and resourceType!=''">
+		and re.RESOURCE_TYPE_ID = #{resourceType}
+	</if>
+	
+	<if test="resourceName!=null and resourceName!=''">
+		and re.RESOURCE_NAME like '%'||#{resourceName}||'%'
+	</if>
+	<if test="hostName!=null and hostName!=''">
+		and re.HOST_NAME like '%'||#{hostName}||'%'
+	</if>
+	 order by re.RESOURCE_ID desc
+	</select>
+	
+	
+	<select id="getByName" parameterType="java.util.Map" resultMap="Resource.ResourceResultMap" >
+	select 
+	<include refid="resourceColumns"/>
+	from ETL_RESOURCE re
+	left join Etl_Resource_Type reType on re.RESOURCE_TYPE_ID = reType.RESOURCE_TYPE_ID
+	where re.RESOURCE_NAME = #{resourceName}
+	</select>
+	
+	<insert id="save" parameterType="com.zbiti.etl.core.vo.Resource">
+		insert into ETL_RESOURCE(RESOURCE_ID,RESOURCE_TYPE_ID,RESOURCE_NAME,URI,PORT,SERVICE_NAME,PASSWORD,DRIVER,USERNAME,HOST_NAME,MAX_ACTIVE,MAX_IDLE,MAX_WAIT,VERSION)
+		values(SEQ_RESOURCE.NEXTVAL,#{resourceType.resourceTypeId},#{resourceName},#{uri},#{port},#{serviceName},#{password},#{driver},#{userName},#{hostName},#{maxActive},#{maxIdle},#{maxWait},#{version})
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ETL_RESOURCE where RESOURCE_ID in (${resourceId})
+	</delete>
+	
+	<update id="update" parameterType="com.zbiti.etl.core.vo.Resource">
+		update ETL_RESOURCE
+		set RESOURCE_TYPE_ID=#{resourceType.resourceTypeId},RESOURCE_NAME=#{resourceName},
+			URI=#{uri},PORT=#{port},SERVICE_NAME=#{serviceName},PASSWORD=#{password},
+			DRIVER=#{driver},USERNAME=#{userName},HOST_NAME=#{hostName},MAX_ACTIVE=#{maxActive},
+			MAX_IDLE=#{maxIdle},MAX_WAIT=#{maxWait},VERSION=#{version}
+		where RESOURCE_ID=#{resourceId}
+	</update>
+	
+	<select id="qryResource" parameterType="java.util.Map" resultType="java.util.Map">
+ 		select RESOURCE_TYPE_ID,RESOURCE_TYPE_NAME
+       from ETL_RESOURCE_TYPE
+ 	</select>
+ 	
+ 	<select id = "getResourceTypeName" parameterType="java.util.Map" resultMap="ResourceType.ResourceTypeResultMap">
+ 	select RESOURCE_TYPE_ID,RESOURCE_TYPE_NAME
+       from ETL_RESOURCE_TYPE where RESOURCE_TYPE_ID = #{resourceTypeId}
+ 	</select>
+	<select id="qryFTPServerName" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT RESOURCE_NAME FROM ETL_RESOURCE WHERE RESOURCE_TYPE_ID in (1,4) ORDER BY RESOURCE_ID DESC
+	</select>
+	
+	<select id="qryDBServerName" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT RESOURCE_NAME FROM ETL_RESOURCE WHERE RESOURCE_TYPE_ID = 2 ORDER BY RESOURCE_ID DESC
+	</select>
+	
+	<select id="qrySCPServerName" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT RESOURCE_NAME,USERNAME,HOST_NAME FROM ETL_RESOURCE WHERE RESOURCE_TYPE_ID = 3 ORDER BY RESOURCE_ID DESC
+	</select>
+	<select id="getHostName"  parameterType="String" resultType="java.util.Map">
+		SELECT HOST_NAME,USERNAME FROM ETL_RESOURCE where RESOURCE_NAME = #{resourceName}
+	</select>
+	<select id="qryDBServerNameEds" parameterType="String" resultType="java.util.Map">
+		select username from ETL_RESOURCE where host_name = #{hostName}
+	</select>
+	<select id="getUserName"  parameterType="String" resultType="String">
+		SELECT USERNAME FROM ETL_RESOURCE where RESOURCE_NAME = #{resourceName}
+	</select>
+	<select id="getResourceName"  parameterType="java.util.Map" resultType="String">
+		SELECT RESOURCE_NAME FROM ETL_RESOURCE WHERE HOST_NAME =#{hostName} AND USERNAME = #{userName}
+	</select>
+</mapper>

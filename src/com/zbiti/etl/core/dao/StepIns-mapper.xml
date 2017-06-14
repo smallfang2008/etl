@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+<mapper namespace="com.zbiti.etl.core.dao.StepInsDao">
+ 	<insert id="saveIntoStepInsBatch" parameterType="java.util.List">
+ 		insert into ETL_STEP_INS (
+ 			STEP_SERIES,
+ 			PREV_STEP_SERIES,
+ 			TASK_SERIES,
+ 			STEP_ID,
+ 			DISPATCH_TIME,
+ 			START_TIME,
+ 			END_TIME,
+ 			RUN_POSITIOIN,
+ 			INNER_TASKS,
+ 			STATUS,
+ 			EXEC_INFO)
+ 		<foreach collection="list" item="item" index="index" separator="union all" >  
+	        select #{item.stepSeries} stepSeries,#{item.prevStepSeries} prevStepSeries,#{item.sceneIns.taskSeries} taskSeries,#{item.step.stepId} stepId,
+	        	#{item.dispatchTime,jdbcType=TIMESTAMP} dispatchTime,#{item.startTime,jdbcType=TIMESTAMP} startTime,#{item.endTime,jdbcType=TIMESTAMP} endTime,#{item.runPosition} runPosition,#{item.innerTasks} innerTasks,
+	        	#{item.status} status,#{item.execInfo} execInfo from dual 
+	    </foreach>
+ 	</insert>
+ 	
+ 	<select id="selectStepHistoryListPage" parameterType="java.util.Map" resultMap="StepIns.StepInsResultMap" >
+ 	    select t3.STEP,
+ 	           t4.NAME,
+ 	           t4.SCENE_ID,
+ 	           t5.step_type_name,
+ 	           t3.STEP_NAME,
+ 	           decode(t3.run_position_type,'1',t6.server_sluster_name,'2',t3.node_code) as node_code,
+ 	           t1.STATUS,
+ 	           t1.STEP_SERIES,
+ 	           t1.TASK_SERIES,
+ 	           t1.RUN_POSITIOIN,
+ 	           t1.EXEC_INFO,
+ 	           t1.DISPATCH_TIME,
+ 	           t1.START_TIME,
+ 	           t1.END_TIME
+ 	      from ETL_STEP_INS t1
+ 	     inner join ETL_SCENE_INS t2
+ 	        on t1.TASK_SERIES = t2.TASK_SERIES
+ 	      left join ETL_STEP t3
+ 	        on t1.STEP_ID = t3.STEP_ID
+ 	      left join ETL_SCENE t4
+ 	        on t2.SCENE_ID = t4.SCENE_ID
+ 	      left join ETL_STEP_TYPE t5
+ 	        on t3.step_type_id = t5.step_type_id
+ 	      left join ETL_SERVER_CLUSTER t6
+ 	        on t3.SERVER_SLUSTER_ID = t6.SERVER_SLUSTER_ID
+ 	      where 1=1
+	     <if test="taskSeries!=null and taskSeries!=''">
+			AND t1.TASK_SERIES = #{taskSeries}
+		 </if>
+		 order by t1.DISPATCH_TIME desc
+	</select>
+	
+	
+	<select id="selectStepInsHisListPage" parameterType="java.util.Map" resultMap="StepIns.StepInsResultMap" >
+		select esi.step_series,
+		       esi.prev_step_series,
+		       esi.task_series,
+		       esi.step_id,
+		       es.step_name,
+		       dispatch_time,
+		       start_time,
+		       end_time,
+		       esi.run_positioin,
+		       esi.exec_info,
+		       e_scene.name,
+		       est.step_type_name,
+		       esi.status
+		  from ETL_STEP_INS esi
+		  left join etl_step es
+		    on es.step_id = esi.step_id
+		  left join etl_step_type est
+		  	on est.step_type_id=es.step_type_id
+		  left join etl_scene e_scene
+		    on e_scene.scene_id = es.scene_id
+		  left join etl_node en
+		    on en.node_code = esi.run_positioin
+		 where 1=1
+		 <if test="taskSeries!=null and taskSeries!=''">
+			AND esi.task_series like '%'||#{taskSeries}||'%'
+		 </if>
+		 <if test="taskName!=null and taskName!=''">
+			AND e_scene.name like '%'||#{taskName}||'%'
+		 </if>
+		 <if test="stepName!=null and stepName!=''">
+			AND es.step_name like '%'||#{stepName}||'%'
+		 </if>
+		 <if test="stepType!=null and stepType!=''">
+			AND es.step_type_id like '%'||#{stepType}||'%'
+		 </if>
+		 <if test="stepSeries!=null and stepSeries!=''">
+			AND esi.step_series like '%'||#{stepSeries}||'%'
+		 </if>
+		 <if test="prevStepSeries!=null and prevStepSeries!=''">
+			AND esi.prev_step_series like '%'||#{prevStepSeries}||'%'
+		 </if>
+		 <if test="nodeCode!=null and nodeCode!=''">
+			AND esi.run_positioin like '%'||#{nodeCode}||'%'
+		 </if>
+		 <if test="serverClusterId!=null and serverClusterId!=''">
+			AND en.server_sluster_id =#{serverClusterId}
+		 </if>
+		 <if test="status!=null and status!=''">
+			AND esi.status in (${status})
+		 </if>
+		  order by step_series desc
+	</select>
+	
+	<select id="getStepSeries" parameterType="java.util.Map" resultMap="StepIns.StepInsResultMap" >
+ 	    select t1.STEP_SERIES,
+ 	           t2.TASK_SERIES
+ 	      from ETL_STEP_INS t1, ETL_SCENE_INS t2
+ 	      where 1=1
+ 	        and t1.TASK_SERIES = t2.TASK_SERIES
+			AND t2.SCENE_ID = #{sceneId}
+	</select>
+	
+	<update id="updateStepIns" parameterType="com.zbiti.etl.core.vo.StepIns">
+		update ETL_STEP_INS
+		   <trim prefix="set" suffixOverrides=",">
+		       <if test="status != null and status != ''">status=#{status},</if>
+		   </trim>
+		where STEP_SERIES=#{stepSeries}
+	</update>
+	
+	<delete id="deleteStepIns" parameterType="String">
+		delete ETL_STEP_INS where step_series=#{stepSeries}
+	</delete>
+	
+	<delete id="batchDeleteStepIns" parameterType="java.util.Map">
+		delete from ETL_STEP_INS where step_series in (${stepSeries})
+	</delete>
+</mapper>

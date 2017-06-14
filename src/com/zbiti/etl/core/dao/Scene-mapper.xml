@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zbiti.etl.core.dao.SceneDao">
+	
+	<select id="getSceneById" parameterType="java.util.Map" resultMap="Scene.SceneResultMap" >
+		select *
+		  from etl_scene es
+		  left join etl_busi_type ebt
+		    on ebt.busi_type_id = es.busi_type_id
+		  left join etl_server_cluster esc
+		    on esc.server_sluster_id = es.server_sluster_id
+		  left join etl_busi_platform ebp
+		    on ebp.busi_platform_id = es.busi_platform_id
+		  left join etl_busi_sys ebs
+		    on ebs.busi_sys_id = es.busi_sys_id
+		  where 1=1
+		  <if test="sceneId!=null and sceneId!=''">
+		  	and es.scene_id=#{sceneId}
+		  </if>
+	</select>
+	
+	<update id="update" parameterType="com.zbiti.etl.core.vo.Scene">
+		update ETL_SCENE
+		   <trim prefix="set" suffixOverrides=",">
+		       <if test="busiType != null and busiType != ''">BUSI_TYPE_ID=#{busiType.busiTypeId},</if>
+		       <if test="serverCluster != null and serverCluster != ''">SERVER_SLUSTER_ID=#{serverCluster.serverClusterId},</if>
+		       <if test="name != null and name != ''">NAME=#{name},</if>
+		       <if test="notes != null and notes != ''">NOTES=#{notes},</if>
+		       <if test="sceneStatus != null and sceneStatus != ''">SCENE_STATUS=#{sceneStatus},</if>
+		       <if test="croneExpression != null and croneExpression != ''">CRONE_EXPRESSION=#{croneExpression},</if>
+		       <if test="busiPlatform != null and busiPlatform != ''">BUSI_PLATFORM_ID=#{busiPlatform.busiPlatformId},</if>
+		       <if test="busiSys != null and busiSys != ''">BUSI_SYS_ID=#{busiSys.busiSysId},</if>
+		       <if test="linkman != null and linkman != ''">LINKMAN=#{linkman},</if>
+		       <if test="linkSource != null and linkSource != ''">LINK_SOURCE=#{linkSource},</if>
+		       <if test="creater != null and creater != ''">CREATER=#{creater},</if>
+		       <if test="createTime != null and createTime != ''">CREATE_TIME=#{createTime},</if>
+		       <if test="startStatus != null and startStatus != ''">START_STATUS=#{startStatus},</if>
+		       <if test="startLog != null and startLog != ''">START_LOG=#{startLog},</if>
+		   </trim>
+		where SCENE_ID=#{sceneId}
+	</update>
+	
+	<insert id="save" parameterType="com.zbiti.etl.core.vo.Scene">
+		insert into ETL_SCENE(SCENE_ID,
+		                      SERVER_SLUSTER_ID,
+		                      NAME,
+		                      NOTES,
+		                      SCENE_STATUS,
+		                      CRONE_EXPRESSION,
+		                      LINKMAN,
+		                      LINK_SOURCE,
+		                      CREATER,
+		                      CREATE_TIME)
+		values(#{sceneId},#{serverCluster.serverClusterId},#{name},#{notes},#{sceneStatus},
+		       #{croneExpression},#{linkman},#{linkSource},#{creater},sysdate)
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ETL_SCENE where SCENE_ID = #{sceneId}
+	</delete>
+	
+	<select id="getSceneSeq" parameterType="String" resultType="String">
+	 	select SEQ_TASK.NEXTVAL from dual
+	</select>
+	
+</mapper>

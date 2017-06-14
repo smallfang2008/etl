@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.FileUpStepDao">
+ 
+ <select id="getById" parameterType="String" resultMap="FileUpStep.FileUpStepResultMap" resultType="com.zbiti.etl.extend.vo.FileUpStep">
+	 select e.STEP_ID,e.RESOURCE_NAME,e.UP_PATH,e.UP_PATH_OFFSET,e.IS_GZ,e.IS_APPEND_TIME,e.APPEND_TIME_PATTERN,e.APPEND_TIME_OFFSET from ETL_FILE_UP_STEP e
+	 WHERE e.STEP_ID = #{id}
+ </select>
+ 
+ <insert id="save" parameterType="com.zbiti.etl.extend.vo.FileUpStep">
+		insert into ETL_FILE_UP_STEP (STEP_ID,RESOURCE_NAME,UP_PATH,UP_PATH_OFFSET,IS_GZ,IS_APPEND_TIME,APPEND_TIME_PATTERN,APPEND_TIME_OFFSET)
+			values (#{stepId}, #{resourceName}, #{upPath},#{upPathOffset},#{isGz},#{isAppendTime},#{appendTimePattern},#{appendTimeOffset})
+ </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_FILE_UP_STEP WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.FileUpStep">
+	update ETL_FILE_UP_STEP
+		set RESOURCE_NAME=#{resourceName},UP_PATH=#{upPath},UP_PATH_OFFSET=#{upPathOffset},IS_GZ=#{isGz},IS_APPEND_TIME=#{isAppendTime},APPEND_TIME_PATTERN=#{appendTimePattern},APPEND_TIME_OFFSET=#{appendTimeOffset}
+		where STEP_ID=#{stepId}
+ </update>
+
+</mapper>

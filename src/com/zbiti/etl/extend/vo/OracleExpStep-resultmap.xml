@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OracleExpStep">
+	<resultMap id="OracleExpStepResultMap" extends="Step.StepResultMap" type="com.zbiti.etl.extend.vo.OracleExpStep" >
+		<result property="resourceName" column="RESOURCE_NAME" />
+		<result property="sqls" column="SQLS" jdbcType="CLOB"/>
+		<result property="filename" column="FILENAME" />
+		<result property="fileTimeOffset" column="FILE_TIME_OFFSET" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.ConvertRecordDao">
+ <select id="getConvertRecord" parameterType="String" resultMap="ConvertRecord.ConvertRecordResultMap" resultType="com.zbiti.etl.extend.vo.ConvertRecord">
+ select RECORD_ID,STEP_ID,FILE_PATH,CONVERT_BYTES,INSERT_TIME,MODIFY_TIME from ETL_CONVERT_RECORD where step_id=#{stepId} and FILE_PATH=#{fileName}
+ </select>
+ 
+ 
+ <insert id="saveConvertRecord" parameterType="com.zbiti.etl.extend.vo.ConvertRecord">
+ 	INSERT INTO ETL_CONVERT_RECORD(RECORD_ID,STEP_ID,FILE_PATH,CONVERT_BYTES,INSERT_TIME,MODIFY_TIME) values 
+ 	(ETL_CONVERT_RECORD_seq.nextval,#{Step.stepId},#{filePath},#{convertBytes},#{insertTime},#{modifyTime})
+ </insert>
+ 
+ <update id="updateConvertRecord" parameterType="com.zbiti.etl.extend.vo.ConvertRecord">
+ 	UPDATE ETL_CONVERT_RECORD set STEP_ID = #{Step.stepId}, FILE_PATH = #{filePath}, 
+ 		CONVERT_BYTES = #{convertBytes},INSERT_TIME=#{insertTime}, MODIFY_TIME = #{modifyTime}
+ 	  WHERE RECORD_ID = #{recordId}
+ </update>
+<!-- <delete id="deleteConvertRecord" parameterType="java.util.HashMap">-->
+<!-- 	delete from ETL_CONVERT_RECORD where instr(file_path,#{sourceFileDir})=1 and step_id =#{stepId}-->
+<!-- </delete>-->
+ <delete id="deleteConvertRecord" parameterType="java.util.HashMap">
+ 	delete 
+	  from ETL_CONVERT_RECORD
+	 where substr(file_path,
+	              instr(file_path, '/', -1) + 1,
+	              instr(file_path, '_', instr(file_path, '/', -1)) -
+	              instr(file_path, '/', -1) - 1) = #{sourceFileDirId}
+ </delete>
+</mapper>

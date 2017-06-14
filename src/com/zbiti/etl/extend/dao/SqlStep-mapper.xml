@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.SqlStepDao">
+ 
+ <select id="getSqlStepByStepId" parameterType="String" resultMap="SqlStep.SqlStepResultMap" resultType="com.zbiti.etl.extend.vo.SqlStep">
+ select 
+       es.*,ess.*
+ from ETL_STEP es
+ inner join ETL_SQL_STEP ess on es.STEP_ID = ess.STEP_ID
+ WHERE es.STEP_ID = #{stepId}
+ </select>
+ 
+   <insert id="save">
+		insert into ETL_SQL_STEP (STEP_ID,DB_NAME,SQLS)
+			values (#{stepId}, #{dbName}, #{sqls})
+   </insert>
+   
+   <update id="update">
+	update ETL_SQL_STEP
+		set STEP_ID=#{stepId},DB_NAME=#{dbName},SQLS=#{sqls}
+		where STEP_ID=#{stepId}
+   </update>
+ 
+   <delete id="delete" parameterType="String">
+ 	  DELETE FROM ETL_SQL_STEP WHERE STEP_ID = #{stepId}
+   </delete>
+
+</mapper>

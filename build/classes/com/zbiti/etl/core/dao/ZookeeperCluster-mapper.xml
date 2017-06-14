@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+<mapper namespace="com.zbiti.etl.core.dao.ZookeeperClusterDao">
+	<!-- id和mapper接口中的方法名对应 -->
+	<!-- 根据节点编码查找节点,获取节点的同时要附带获取节点提供的容器Node2Container -->
+	
+	<select id="selectZookeeperClusterList" parameterType="java.util.Map" resultMap="ZookeeperCluster.ZookeeperClusterResultMap" >
+		SELECT ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,ZOOKEEPER_STRING AS ZOOKEEPER_STRING,ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME FROM ETL_ZOOKEEPER_CLUSTER WHERE 1=1
+		<if test="zookeeperName!=null and zookeeperName!=''">
+			AND ZOOKEEPER_CLUSTER_NAME LIKE '%'||#{zookeeperName}||'%'
+		</if>
+		<if test="zookeeperCode!=null and zookeeperCode!=''">
+			AND ZOOKEEPER_CLUSTER_CODE = #{zookeeperCode}
+		</if>
+	 	ORDER BY ZOOKEEPER_CLUSTER_CODE DESC
+	</select>
+	
+	<select id="getZookeeperClusterByCode" parameterType="java.util.Map" resultMap="ZookeeperCluster.ZookeeperClusterResultMap" >
+		SELECT ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,ZOOKEEPER_STRING AS ZOOKEEPER_STRING,ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME FROM ETL_ZOOKEEPER_CLUSTER WHERE ZOOKEEPER_CLUSTER_CODE = #{zookeeperCode}
+	</select>
+</mapper>

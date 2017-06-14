@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Node">
+	<resultMap id="NodeResultMap" type="com.zbiti.etl.core.vo.Node" >
+		<id property="nodeCode" column="NODE_CODE"/>
+		<result property="ipAddress" column="IP_ADDRESS"/>
+		<result property="serverName" column="SERVER_NAME"/>
+		<result property="logPath" column="LOG_PATH"/>
+		<result property="maxTasks" column="MAX_TASKS"/>
+		<result property="isGetClusterTask" column="IS_GET_CLUSTER_TASK"/>
+		
+		<association property="serverCluster" resultMap="ServerCluster.ServerClusterResultMap"/>
+	</resultMap>
+</mapper>

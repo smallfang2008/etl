@@ -1,0 +1,73 @@
+此文件记录zookeeper节点结构，不做其他用途
+调度根节点
+/schedule
+
+等待节点
+/schedule/wait
+/schedule/wait/clusterId or nodeCode/stepId/taskSeries_stepSeries
+获取指令时加锁
+/schedule/wait/clusterId or nodeCode/stepId/lock
+
+正在运行节点
+/schedule/doing
+/schedule/doing/stepId/taskSeries_stepSeries
+获取等待任务创建
+/schedule/doing/stepId/taskSeries_stepSeries/wait
+运行任务前创建正在执行指令
+/schedule/doing/stepId/taskSeries_stepSeries/temp
+用户发出停止指令
+/schedule/doing/stepId/taskSeries_stepSeries/stop
+
+
+历史节点
+/schedule/his
+/schedule/his/taskSeries_stepSeries
+
+异常节点
+/schedule/error
+/schedule/error/taskSeries_stepSeries
+
+历史异常节点-异常节点会入库，入完会转移至历史异常，备用做重新运行、忽略等操作
+/schedule/hiserror
+/schedule/hiserror/taskSeries_stepSeries
+
+定时器节点
+/schedule/timer
+/schedule/timer/wait/commandId
+/schedule/timer/doing/sceneId/commandId
+用户发出停止定时请求时创建
+/schedule/timer/doing/sceneId/commandId/stop
+
+清理节点-存储主节点扫描出来的异常终止的节点，由子节点扫描并做清理
+/schedule/clean
+/schedule/clean/nodeCode/taskSeries_stepSeries
+
+
+
+
+
+
+zookeeper节点初始化：
+java版：
+ZooKeeperUtil.createNode("/schedule", null, zk);
+ZooKeeperUtil.createNode("/schedule/wait", null, zk);
+ZooKeeperUtil.createNode("/schedule/doing", null, zk);
+ZooKeeperUtil.createNode("/schedule/timer", null, zk);
+ZooKeeperUtil.createNode("/schedule/timer/wait", null, zk);
+ZooKeeperUtil.createNode("/schedule/timer/doing", null, zk);
+ZooKeeperUtil.createNode("/schedule/error", null, zk);
+ZooKeeperUtil.createNode("/schedule/his", null, zk);
+ZooKeeperUtil.createNode("/schedule/clean", null, zk);
+ZooKeeperUtil.createNode("/schedule/hiserror", null, zk);
+
+命令版：
+create /schedule null
+create /schedule/wait null
+create /schedule/doing null
+create /schedule/timer null
+create /schedule/timer/wait null
+create /schedule/timer/doing null
+create /schedule/error null
+create /schedule/his null
+create /schedule/hiserror null
+create /schedule/clean null

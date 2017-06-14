@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+<mapper namespace="com.zbiti.etl.core.dao.NodeDao">
+	<!-- id和mapper接口中的方法名对应 -->
+	<!-- 根据节点编码查找节点,获取节点的同时要附带获取节点提供的容器Node2Container -->
+	<select id="getByCode" parameterType="java.util.Map" resultMap="Node.NodeResultMap" >
+		SELECT N.NODE_CODE,N.IP_ADDRESS,N.SERVER_NAME,N.LOG_PATH,N.MAX_TASKS,N.IS_GET_CLUSTER_TASK,
+		N.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH,
+		z.ZOOKEEPER_CLUSTER_CODE,z.ZOOKEEPER_STRING,z.ZOOKEEPER_CLUSTER_NAME
+		FROM ETL_NODE N 
+		LEFT JOIN ETL_SERVER_CLUSTER S
+		ON N.SERVER_SLUSTER_ID = S.SERVER_SLUSTER_ID 
+		left join ETL_ZOOKEEPER_CLUSTER z on s.ZOOKEEPER_CLUSTER_CODE=z.ZOOKEEPER_CLUSTER_CODE
+		WHERE N.NODE_CODE = #{nodeCode}
+	</select>
+	
+	<select id="getByServerClusterId" parameterType="java.util.Map" resultMap="Node.NodeResultMap" >
+		SELECT N.NODE_CODE,N.IP_ADDRESS,N.SERVER_NAME,N.LOG_PATH,N.MAX_TASKS,N.IS_GET_CLUSTER_TASK,
+		N.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH
+		FROM ETL_NODE N LEFT JOIN ETL_SERVER_CLUSTER S
+		ON N.SERVER_SLUSTER_ID = S.SERVER_SLUSTER_ID WHERE N.SERVER_SLUSTER_ID = ${serverClusterId}
+	</select>
+	
+	<select id="selectNodeListPage" parameterType="java.util.Map" resultMap="Node.NodeResultMap" >
+		SELECT N.NODE_CODE,N.IP_ADDRESS,N.SERVER_NAME,N.LOG_PATH,N.MAX_TASKS,N.IS_GET_CLUSTER_TASK,
+		N.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH
+		FROM ETL_NODE N LEFT JOIN ETL_SERVER_CLUSTER S
+		ON N.SERVER_SLUSTER_ID = S.SERVER_SLUSTER_ID WHERE 1=1
+		<if test="nodeCode!=null and nodeCode!=''">
+			AND N.NODE_CODE LIKE '%'||#{nodeCode}||'%'
+		</if>
+		<if test="serverName!=null and serverName!=''">
+			AND N.SERVER_NAME LIKE '%'||#{serverName}||'%'
+		</if>
+		<if test="ipAddress!=null and ipAddress!=''">
+			AND N.IP_ADDRESS LIKE '%'||#{ipAddress}||'%'
+		</if>
+		<if test="serverClusterId!=null and serverClusterId!=''">
+			AND N.SERVER_SLUSTER_ID = ${serverClusterId}
+		</if>
+	 	ORDER BY N.NODE_CODE DESC
+	</select>
+	
+	<select id="selectNodeList" parameterType="java.util.Map" resultMap="Node.NodeResultMap" >
+		SELECT N.NODE_CODE,N.IP_ADDRESS,N.SERVER_NAME,N.LOG_PATH,N.MAX_TASKS,N.IS_GET_CLUSTER_TASK,
+		N.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH
+		FROM ETL_NODE N LEFT JOIN ETL_SERVER_CLUSTER S
+		ON N.SERVER_SLUSTER_ID = S.SERVER_SLUSTER_ID WHERE 1=1
+		<if test="nodeCode!=null and nodeCode!=''">
+			AND N.NODE_CODE LIKE '%'||#{nodeCode}||'%'
+		</if>
+		<if test="serverName!=null and serverName!=''">
+			AND N.SERVER_NAME LIKE '%'||#{serverName}||'%'
+		</if>
+		<if test="ipAddress!=null and ipAddress!=''">
+			AND N.IP_ADDRESS LIKE '%'||#{ipAddress}||'%'
+		</if>
+		<if test="serverClusterId!=null and serverClusterId!=''">
+			AND N.SERVER_SLUSTER_ID = ${serverClusterId}
+		</if>
+	 	ORDER BY N.NODE_CODE DESC
+	</select>
+	
+	<insert id="save" parameterType="com.zbiti.etl.core.vo.Node">
+		insert into ETL_NODE(NODE_CODE,IP_ADDRESS,SERVER_NAME,LOG_PATH,MAX_TASKS,SERVER_SLUSTER_ID,IS_GET_CLUSTER_TASK)
+		values(#{nodeCode},#{ipAddress},#{serverName},#{logPath},${maxTasks},${serverCluster.serverClusterId},#{isGetClusterTask})
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ETL_NODE where NODE_CODE in (${nodeCode})
+	</delete>
+	
+	<update id="update" parameterType="com.zbiti.etl.core.vo.Node">
+		update ETL_NODE
+		set NODE_CODE=#{nodeCode},IP_ADDRESS=#{ipAddress},SERVER_NAME=#{serverName},LOG_PATH=#{logPath},
+		MAX_TASKS=${maxTasks},SERVER_SLUSTER_ID=${serverCluster.serverClusterId},IS_GET_CLUSTER_TASK=#{isGetClusterTask}
+		where NODE_CODE=#{oldNodeCode}
+	</update>
+</mapper>

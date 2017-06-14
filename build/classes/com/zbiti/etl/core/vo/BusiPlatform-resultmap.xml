@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BusiPlatform">
+	<resultMap id="BusiPlatformResultMap" type="com.zbiti.etl.core.vo.BusiPlatform" >
+		<id property="busiPlatformId" column="BUSI_PLATFORM_ID"/>
+		<result property="busiPlatformName" column="BUSI_PLATFORM_NAME"/>
+		<result property="busiPlatformNotes" column="BUSI_PLATFORM_NOTES"/>
+	</resultMap>
+</mapper>

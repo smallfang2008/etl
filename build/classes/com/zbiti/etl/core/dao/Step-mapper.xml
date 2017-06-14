@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zbiti.etl.core.dao.StepDao">
+	
+	<select id="listFirstStepBySceneId" parameterType="java.util.Map" resultMap="Step.StepResultMap" >
+		select * from etl_step es
+		where es.previous_step='-1' and es.scene_id=#{sceneId}
+	</select>
+	
+	<select id="listStepBySceneId" parameterType="java.util.Map" resultMap="Step.StepResultMap" >
+		select es.STEP_ID, es.STEP_TYPE_ID, es.RUN_POSITION_TYPE, es.SERVER_SLUSTER_ID, es.SCENE_ID, es.STEP, es.PREVIOUS_STEP, es.STEP_NAME, es.CREATE_OP, es.MODIFY_OP, es.CREATE_DATE, es.MODIFY_DATE, es.THREAD_NUM, es.MEM_MAX, es.MEM_MIN, es.RUN_TYPE,es.IS_WAIT_PRE,ec.name,et.step_type_name,et.PAGE_CONFIG_TAG,et.CONTROLLER_MAPPING,decode(es.run_position_type,'1',esc.server_sluster_name,'2',es.node_code) as node_code,decode(es.run_position_type,'1',to_char(esc.SERVER_SLUSTER_ID),'2',es.node_code) as RUNPOSITION from etl_step es 
+	    inner join ETL_SCENE ec on es.scene_id = ec.scene_id
+	    inner join ETL_STEP_TYPE et on es.step_type_id = et.step_type_id
+	    left join ETL_SERVER_CLUSTER esc on es.SERVER_SLUSTER_ID = esc.server_sluster_id
+		where es.scene_id=#{sceneId}
+		ORDER BY es.STEP
+	</select>
+	
+	<select id="listStepNameBySceneId" parameterType="java.util.Map" resultType="java.util.HashMap" >
+		select et.step_type_id as steptypeid,es.step as step_type_id,et.step_type_name as type_name, es.STEP_NAME as step_type_name from etl_step es 
+	    inner join ETL_STEP_TYPE et on es.step_type_id = et.step_type_id
+	    where es.scene_id=#{sceneId}
+	    order by es.step 
+	</select>
+	
+	<select id="listNextSteps" parameterType="java.util.Map"  resultMap="Step.StepResultMap">
+		select es.*,ec.*,et.*,esc.*
+	 	from etl_step es
+		inner join ETL_SCENE ec on es.scene_id = ec.scene_id
+	    inner join ETL_STEP_TYPE et on es.step_type_id = et.step_type_id
+	    left join ETL_SERVER_CLUSTER esc on es.SERVER_SLUSTER_ID = esc.server_sluster_id
+		where es.scene_id=#{scene.sceneId} 
+		and instr(',' || replace(es.previous_step, chr(32), null) || ',',',' || #{step} || ',') &lt;&gt;0 
+	</select>
+	
+	<select id="getResurceList" parameterType="java.util.Map" resultType="java.util.HashMap" >
+		select t.resource_id as id,t.resource_name as name from ETL_RESOURCE t
+		where t.resource_type_id in(${typeId})
+	</select>
+	
+	<select id="getStepSeq" parameterType="String" resultType="String">
+	 	select etl_step_seq.nextval from dual
+	</select>
+	
+	<select id="getStep" parameterType="String" resultMap="Step.StepResultMap">
+	 	select es.*,ec.*,et.*,esc.*
+	 	from etl_step es
+		inner join ETL_SCENE ec on es.scene_id = ec.scene_id
+	    inner join ETL_STEP_TYPE et on es.step_type_id = et.step_type_id
+	    left join ETL_SERVER_CLUSTER esc on es.SERVER_SLUSTER_ID = esc.server_sluster_id
+		where es.step_id=#{stepId}
+	</select>
+	
+	<insert id="saveStep" parameterType="com.zbiti.etl.core.vo.Step">
+		insert into ETL_STEP (STEP_ID,STEP_TYPE_ID,RUN_POSITION_TYPE,SERVER_SLUSTER_ID,NODE_CODE,SCENE_ID,STEP,PREVIOUS_STEP,STEP_NAME,CREATE_OP,MODIFY_OP,CREATE_DATE,MODIFY_DATE,THREAD_NUM,MEM_MAX,MEM_MIN,RUN_TYPE,IS_WAIT_PRE)
+      	values (#{stepId},#{stepType.stepTypeId},#{runPositionType},#{serverCluster.serverClusterId},#{node.nodeCode},#{scene.sceneId},#{step},#{previousStep},#{stepName},#{createOp},null,sysdate,sysdate,#{threadNum},#{memMax},#{memMin},#{runType},#{isWaitPre})
+ 	</insert>
+ 	
+ 	<update id="updateStep" parameterType="com.zbiti.etl.core.vo.Step">
+		update ETL_STEP
+			<set>
+				<if test="stepName != null and stepName != ''">STEP_NAME=#{stepName}</if>
+				<if test="step != null and step != ''">,STEP=#{step}</if>
+				<if test="runPositionType != null and runPositionType != ''">,RUN_POSITION_TYPE=#{runPositionType}</if>
+				<if test="previousStep != null and previousStep != ''">,PREVIOUS_STEP=#{previousStep}</if>
+				<if test="serverCluster.serverClusterId != null and serverCluster.serverClusterId != ''">,SERVER_SLUSTER_ID=#{serverCluster.serverClusterId}</if>
+				<if test="node.nodeCode != null and node.nodeCode != ''">,NODE_CODE=#{node.nodeCode}</if>
+				<if test="threadNum != null and threadNum != ''">,THREAD_NUM=#{threadNum}</if>
+				<if test="memMax != null and memMax != ''">,MEM_MAX=#{memMax}</if>
+				<if test="memMin != null and memMin != ''">,MEM_MIN=#{memMin}</if>
+				<if test="runType != null and runType != ''">,RUN_TYPE=#{runType}</if>
+				<if test="isWaitPre != null and isWaitPre != ''">,IS_WAIT_PRE=#{isWaitPre}</if>
+				<if test="modifyOp != null and modifyOp != ''">,MODIFY_OP=#{modifyOp}</if>
+				,MODIFY_DATE=sysdate
+			</set>
+			<where>
+				STEP_ID=#{stepId}
+			</where>
+	 </update>
+	
+	<delete id="deleteStep" parameterType="String">
+		delete from ETL_STEP WHERE step_id in (${ids})
+	</delete>
+	
+	
+	
+	<select id="listStepByNode" parameterType="java.util.Map" resultMap="Step.StepResultMap" >
+		select * from etl_step where  NODE_CODE=#{nodeCode} and RUN_POSITION_TYPE=2
+	</select>
+	<select id="listStepByCluster" parameterType="java.util.Map" resultMap="Step.StepResultMap" >
+		select * from etl_step where  SERVER_SLUSTER_ID=#{cluster} and RUN_POSITION_TYPE=1
+	</select>
+	
+	<select id="listPreStep" parameterType="com.zbiti.etl.core.vo.Step" resultMap="Step.StepResultMap" >
+		select * from etl_step where scene_id=#{scene.sceneId} and step in (${previousStep})
+	</select>
+	
+	<!--	-->
+	<select id="listStepByCondition" parameterType="java.util.Map" resultMap="Step.StepResultMap" >
+		select es.STEP_ID, es.STEP_TYPE_ID, es.RUN_POSITION_TYPE, es.SERVER_SLUSTER_ID, es.SCENE_ID, es.STEP, es.PREVIOUS_STEP, es.STEP_NAME, es.CREATE_OP, es.MODIFY_OP, es.CREATE_DATE, es.MODIFY_DATE, es.THREAD_NUM, es.MEM_MAX, es.MEM_MIN, es.RUN_TYPE,es.IS_WAIT_PRE,ec.name,et.step_type_name,et.PAGE_CONFIG_TAG,et.CONTROLLER_MAPPING,es.node_code,decode(es.run_position_type,'1',to_char(esc.SERVER_SLUSTER_ID),'2',es.node_code) as RUNPOSITION,esc.server_sluster_name
+		from etl_step es 
+	    inner join ETL_SCENE ec on es.scene_id = ec.scene_id
+	    inner join ETL_STEP_TYPE et on es.step_type_id = et.step_type_id
+	    left join ETL_SERVER_CLUSTER esc on es.SERVER_SLUSTER_ID = esc.server_sluster_id
+ 		left join etl_node en on en.node_code=es.node_code
+		where 1=1
+		<if test="taskName != null and taskName != ''">
+			and ec.name like '%'||#{taskName}||'%'
+		</if>
+		<if test="stepName != null and stepName != ''">
+			and es.step_name like '%'||#{stepName}||'%'
+		</if>
+		<if test="stepType != null and stepType != ''">
+			and es.step_type_id =#{stepType}
+		</if>
+		<if test="serverClusterId != null and serverClusterId != ''">
+			and (es.server_sluster_id=#{serverClusterId} or en.server_sluster_id=#{serverClusterId})
+		</if>
+		
+		<if test="nodeCode != null and nodeCode != ''">
+			and es.node_code like '%'||#{nodeCode}||'%'
+		</if>
+		ORDER BY es.STEP desc
+	</select>
+</mapper>

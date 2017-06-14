@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.KettleStepDao">
+ 
+ <select id="getById" parameterType="String" resultMap="KettleStep.KettleStepResultMap" resultType="com.zbiti.etl.extend.vo.KettleStep">
+ select 
+       es.STEP_ID, es.STEP_TYPE_ID, es.CLUSTER_CODE, es.CONTAINER_ID, es.SCENE_ID, es.STEP, 
+ 		es.PREVIOUS_STEP, es.STEP_CODE, es.STEP_NAME, es.CREATE_OP, es.MODIFY_OP, es.CREATE_DATE, 
+ 		es.MODIFY_DATE, es.VERSION,ess.KETTLE_TYPE,ess.KETTLE_FILE_NAME,ess.KETTLE_FILE_STREAM
+ from ETL_STEP es
+ inner join ETL_KETTLE_STEP ess on es.STEP_ID = ess.STEP_ID
+ WHERE es.STEP_ID = #{id}
+ </select>
+ 
+ <insert id="save" parameterType="com.zbiti.etl.extend.vo.KettleStep">
+		insert into ETL_KETTLE_STEP (STEP_ID,KETTLE_TYPE,KETTLE_FILE_NAME,KETTLE_FILE_STREAM)
+			values (#{stepId}, #{kettleType},#{kettleFileName},#{kettleFileStream})
+ </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_KETTLE_STEP WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.KettleStep">
+	update ETL_KETTLE_STEP
+		set KETTLE_TYPE=#{kettleType}
+		<if test="kettleFileName!=null and kettleFileName!=''">
+		,KETTLE_FILE_NAME=#{kettleFileName}
+		,KETTLE_FILE_STREAM=#{kettleFileStream}
+		</if>
+		where STEP_ID=#{stepId}
+ </update>
+ 
+  <select id="getKettleById" parameterType="String" resultMap="KettleStep.KettleStepResultMap" resultType="com.zbiti.etl.extend.vo.KettleStep">
+	 select 
+	        STEP_ID,ess.KETTLE_TYPE,ess.KETTLE_FILE_NAME,ess.KETTLE_FILE_STREAM
+	 from ETL_KETTLE_STEP ess
+	 	WHERE STEP_ID = #{stepId}
+ </select>
+ 
+ 
+</mapper>

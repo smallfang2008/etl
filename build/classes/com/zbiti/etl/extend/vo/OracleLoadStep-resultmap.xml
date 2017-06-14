@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OracleLoadStep">
+	<resultMap id="OracleLoadStepResultMap" extends="Step.StepResultMap" type="com.zbiti.etl.extend.vo.OracleLoadStep" >
+		<result property="serverName" column="SERVER_NAME" />
+		<result property="prepareSql" column="PREPARE_SQL" />
+		<result property="postSql" column="POST_SQL" />
+		<result property="tableName" column="TABLE_NAME" />
+		<result property="columns" column="COLUMNS" />
+		<result property="dataSplit" column="DATA_SPLIT" />
+		<result property="encoding" column="ENCODING" />
+		
+	</resultMap>
+</mapper>

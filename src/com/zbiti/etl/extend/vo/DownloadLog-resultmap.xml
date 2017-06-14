@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DownloadLog">
+	<resultMap id="DownloadLogResultMap" type="com.zbiti.etl.extend.vo.DownloadLog" >
+		<result property="stepSeries" column="STEP_SERIES"/>
+		<result property="serverName" column="SERVER_NAME"/>
+		<result property="filePath" column="FILE_PATH"/>
+		<result property="fileSize" column="FILE_SIZE"/>
+		<result property="insertTime" column="INSERT_TIME"/>
+	</resultMap>
+</mapper>

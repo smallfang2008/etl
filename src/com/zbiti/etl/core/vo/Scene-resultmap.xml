@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Scene">
+	<resultMap id="SceneResultMap" type="com.zbiti.etl.core.vo.Scene" >
+		<id property="sceneId" column="SCENE_ID"/>
+		<result property="name" column="NAME"/>
+		<result property="notes" column="NOTES"/>
+		<result property="sceneStatus" column="SCENE_STATUS"/>
+		<result property="linkman" column="LINKMAN"/>
+		<result property="linkSource" column="LINK_SOURCE"/>
+		<result property="croneExpression" column="CRONE_EXPRESSION"/>
+		<result property="creater" column="CREATER"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="startStatus" column="START_STATUS"/>
+		<result property="startLog" column="START_LOG"/>
+		
+		<association property="busiType" resultMap="BusiType.BusiTypeResultMap"/>
+		<association property="serverCluster" resultMap="ServerCluster.ServerClusterResultMap"/>
+		<association property="busiPlatform" resultMap="BusiPlatform.BusiPlatformResultMap"/>
+		<association property="busiSys" resultMap="BusiSys.BusiSysResultMap"/>
+	</resultMap>
+</mapper>

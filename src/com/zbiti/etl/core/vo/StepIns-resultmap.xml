@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StepIns">
+	<resultMap id="StepInsResultMap" type="com.zbiti.etl.core.vo.StepIns" >
+		<id property="stepSeries" column="STEP_SERIES" />
+		<result property="prevStepSeries" column="PREV_STEP_SERIES" />
+		<result property="dispatchTime" column="DISPATCH_TIME" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="runPosition" column="RUN_POSITIOIN" />
+		<result property="innerTasks" column="INNER_TASKS" />
+		<result property="status" column="STATUS" />
+		<result property="execInfo" column="EXEC_INFO" />
+		<association property="sceneIns" resultMap="SceneIns.SceneInsResultMap" />
+		<association property="step" resultMap="Step.StepResultMap" />
+	</resultMap>
+</mapper>

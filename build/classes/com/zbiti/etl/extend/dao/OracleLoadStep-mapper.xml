@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.OracleLoadStepDao">
+ 
+ <select id="getById" parameterType="String" resultMap="OracleLoadStep.OracleLoadStepResultMap" resultType="com.zbiti.etl.extend.vo.OracleLoadStep">
+	select eo.step_id,eo.server_name,eo.prepare_sql,eo.post_sql,eo.table_name,eo.columns,eo.data_split,eo.encoding 
+	from ETL_ORACLE_LOAD_STEP eo
+ 	WHERE eo.STEP_ID = #{id}
+ </select>
+ 
+ <insert id="save" parameterType="com.zbiti.etl.extend.vo.OracleLoadStep">
+		insert into ETL_ORACLE_LOAD_STEP (STEP_ID,SERVER_NAME,PREPARE_SQL,TABLE_NAME,COLUMNS,POST_SQL,DATA_SPLIT,ENCODING)
+			values (#{stepId}, #{serverName}, #{prepareSql}, #{tableName}, #{columns}, #{postSql}, #{dataSplit},#{encoding})
+ </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_ORACLE_LOAD_STEP WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.OracleLoadStep">
+	update ETL_ORACLE_LOAD_STEP
+		set SERVER_NAME=#{serverName},PREPARE_SQL=#{prepareSql},TABLE_NAME=#{tableName},
+		COLUMNS=#{columns},POST_SQL=#{postSql},DATA_SPLIT=#{dataSplit},ENCODING=#{encoding}
+		where STEP_ID=#{stepId}
+ </update>
+
+</mapper>

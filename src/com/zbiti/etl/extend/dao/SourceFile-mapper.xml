@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.SourceFileDao">
+ <select id="getSourceFileByDirIdAndDir" parameterType="String" resultMap="SourceFile.SourceFileResultMap" resultType="com.zbiti.etl.extend.vo.SourceFile">
+ select 
+       SOURCE_FILE_ID,SOURCE_FILE_DIR_ID,DIRECTORY,MAX_FILE,MAX_FILE_SIZE,MODIFY_DATE
+ from ETL_SOURCE_FILE WHERE SOURCE_FILE_DIR_ID = #{sourceFileDirId} AND DIRECTORY = #{sourceFileDir}
+ </select>
+ 
+ <select id="listSourceFileByDirId" parameterType="String" resultMap="SourceFile.SourceFileResultMap">
+ select 
+       SOURCE_FILE_ID,SOURCE_FILE_DIR_ID,DIRECTORY,MAX_FILE,MAX_FILE_SIZE,MODIFY_DATE
+ from ETL_SOURCE_FILE WHERE SOURCE_FILE_DIR_ID = #{sourceFileDirId}
+ </select>
+ <insert id="saveSourceFile" parameterType="com.zbiti.etl.extend.vo.SourceFile">
+ 	INSERT INTO ETL_SOURCE_FILE(SOURCE_FILE_ID,SOURCE_FILE_DIR_ID,DIRECTORY,MAX_FILE,MAX_FILE_SIZE,MODIFY_DATE) values 
+ 	(ETL_SOURCE_FILE_seq.nextval,#{sourceFileDir.sourceFileDirId},#{directory},#{maxFile},#{maxFileSize},#{modifyDate})
+ </insert>
+ 
+ <update id="updateSourceFile" parameterType="com.zbiti.etl.extend.vo.SourceFile">
+ 	UPDATE ETL_SOURCE_FILE set SOURCE_FILE_DIR_ID = #{sourceFileDir.sourceFileDirId}, DIRECTORY = #{directory}, 
+ 		MAX_FILE = #{maxFile},MAX_FILE_SIZE=#{maxFileSize}, MODIFY_DATE = #{modifyDate}
+ 	  WHERE SOURCE_FILE_ID = #{sourceFileId}
+ </update>
+ 
+ <delete id="deleteGetStep" parameterType="String">
+	 delete from ETL_SOURCE_FILE
+	where SOURCE_FILE_DIR_ID in (select SOURCE_FILE_DIR_ID from ETL_SOURCE_FILE_DIR where STEP_ID= #{stepId})
+ </delete>
+ 
+ <delete id="deleteGetDir" parameterType="String">
+	delete from ETL_SOURCE_FILE
+	where SOURCE_FILE_DIR_ID in (${dirId})
+ </delete>
+</mapper>

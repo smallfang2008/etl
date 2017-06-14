@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ServerCluster">
+	<resultMap id="ServerClusterResultMap" type="com.zbiti.etl.core.vo.ServerCluster" >
+		<id  property="serverClusterId" column="SERVER_SLUSTER_ID" />
+    	<result  property="serverClusterName" column="SERVER_SLUSTER_NAME" />
+    	<result  property="rootPath" column="ROOT_PATH" />
+    	<result  property="nodeNumber" column="NODE_NUMBER" />
+    	<association property="zookeeperCluster" resultMap="ZookeeperCluster.ZookeeperClusterResultMap" />
+	</resultMap>
+</mapper>

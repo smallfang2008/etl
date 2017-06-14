@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ZookeeperCluster">
+	<resultMap id="ZookeeperClusterResultMap" type="com.zbiti.etl.core.vo.ZookeeperCluster" >
+		<id  property="zookeeperCode" column="ZOOKEEPER_CODE" />
+    	<result  property="zookeeperString" column="ZOOKEEPER_STRING" />
+    	<result  property="zookeeperName" column="ZOOKEEPER_NAME" />
+	</resultMap>
+</mapper>

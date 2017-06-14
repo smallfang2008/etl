@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConvertRecord">
+	<resultMap id="ConvertRecordResultMap" type="com.zbiti.etl.extend.vo.ConvertRecord" >
+		<id property="recordId" column="RECORD_ID" />
+		<result property="filePath" column="FILE_PATH" />
+		<result property="convertBytes" column="CONVERT_BYTES" />
+		<result property="insertTime" column="INSERT_TIME" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<association property="Step" resultMap="Step.StepResultMap" />
+	</resultMap>
+</mapper>

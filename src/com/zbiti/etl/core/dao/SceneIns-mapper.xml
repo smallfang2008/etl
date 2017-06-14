@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zbiti.etl.core.dao.SceneInsDao">
+	
+	<insert id="saveSceneIns" parameterType="com.zbiti.etl.core.vo.SceneIns">
+		insert into etl_scene_ins(TASK_SERIES,SCENE_ID,DISPATCH_TIME,END_TIME,TASK_STATUS,TASK_RESULT)
+		VALUES(#{taskSeries},#{scene.sceneId},#{dispatchTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP},#{taskStatus,jdbcType=VARCHAR},#{taskResult,jdbcType=VARCHAR})
+	</insert>
+	<update id="updateSceneIns" parameterType="com.zbiti.etl.core.vo.SceneIns">
+		update etl_scene_ins set end_time=#{endTime},task_status=#{taskStatus},task_result=#{taskResult}
+		where task_series=#{taskSeries}
+	</update>
+	
+	<select id="selectTaskListPage" parameterType="java.util.Map" resultMap="SceneIns.SceneInsResultMap" >
+	    select * from (
+			  select t1.CRONE_EXPRESSION,
+		             t1.SCENE_STATUS,
+		             t1.NOTES,
+		             t1.NAME,
+		             t1.SERVER_SLUSTER_ID,
+		             t1.SCENE_ID,
+		             t1.BUSI_SYS_ID,
+		             t1.START_STATUS,
+		             t1.START_LOG,
+		             t3.SERVER_SLUSTER_NAME,
+		             nvl(t2.TASK_SERIES,'-') || rownum as TASK_SERIES,
+		             t2.DISPATCH_TIME,
+		             t2.TASK_RESULT,
+		             t2.TASK_STATUS,
+		             row_number() over(partition by t1.SCENE_ID order by t2.DISPATCH_TIME desc) rn
+			      from ETL_SCENE t1
+			      left join ETL_SCENE_INS t2
+			        on  t1.SCENE_ID  = t2.SCENE_ID
+			      left join ETL_SERVER_CLUSTER t3
+			        on t1.SERVER_SLUSTER_ID = t3.SERVER_SLUSTER_ID
+	          )
+	        where rn = 1
+	     <if test="sceneId!=null and sceneId!=''">
+			AND SCENE_ID = #{sceneId}
+		 </if>
+	     <if test="name!=null and name!=''">
+			AND NAME LIKE '%' || #{name} || '%'
+		 </if>
+		 <if test="serverCluster!=null and serverCluster!=''">
+			AND SERVER_SLUSTER_ID = #{serverCluster}
+		 </if>
+		 <if test="sceneState!=null and sceneState!=''">
+			AND SCENE_STATUS = #{sceneState}
+		 </if>
+		 <if test="taskResult!=null and taskResult!=''">
+			AND TASK_RESULT like '%' || #{taskResult} || '%'
+		 </if>
+		 <if test="notes!=null and notes!=''">
+			AND NOTES LIKE '%' || #{notes} || '%'
+		 </if>
+		 <if test="taskStatus!=null and taskStatus!=''">
+			AND TASK_STATUS = #{taskStatus}
+		 </if>
+		 <if test="beginTime!=null and beginTime!=''">
+			AND to_char(DISPATCH_TIME, 'yyyy-MM-dd hh24:mi:ss') &gt;= #{beginTime}
+		 </if>
+		 <if test="endTime!=null and endTime!=''">
+			AND to_char(DISPATCH_TIME, 'yyyy-MM-dd hh24:mi:ss') &lt;= #{endTime}
+		 </if>
+		 <if test="startStatus!=null and startStatus!=''">
+			AND START_STATUS like '%' || #{startStatus} || '%'
+		 </if>
+		 order by DISPATCH_TIME desc nulls last
+	</select>
+	
+	<select id="selectTaskHistoryListPage" parameterType="java.util.Map" resultMap="SceneIns.SceneInsResultMap" >
+			  select t1.CRONE_EXPRESSION,
+		             t1.SCENE_STATUS,
+		             t1.NOTES,
+		             t1.NAME,
+		             t1.SERVER_SLUSTER_ID,
+		             t1.SCENE_ID,
+		             t1.BUSI_SYS_ID,
+		             t2.TASK_SERIES,
+		             t2.DISPATCH_TIME,
+		             t2.END_TIME,
+		             t2.TASK_RESULT,
+		             t2.TASK_STATUS
+			      from ETL_SCENE t1, ETL_SCENE_INS t2
+			    where t1.SCENE_ID  = t2.SCENE_ID
+	     <if test="sceneId!=null and sceneId!=''">
+			AND t2.SCENE_ID = #{sceneId}
+		 </if>
+		 order by t2.DISPATCH_TIME desc
+	</select>
+	
+	<select id="querySceneIns" parameterType="java.util.Map" resultMap="SceneIns.SceneInsResultMap" >
+			  select * from ETL_SCENE_INS where TASK_SERIES = #{taskSeries}
+	</select>
+	
+	<delete id="deleteSceneIns" parameterType="String">
+		delete from ETL_SCENE_INS where SCENE_ID = #{sceneId}
+	</delete>
+	
+</mapper>

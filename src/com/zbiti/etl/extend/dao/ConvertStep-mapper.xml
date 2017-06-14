@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.ConvertStepDao">
+ 
+ <select id="getById" parameterType="String" resultMap="ConvertStep.ConvertStepResultMap">
+	 select ec.step_id,ec.super_class,ec.charset from ETL_CONVERT_STEP ec
+	 WHERE ec.STEP_ID = #{id}
+ </select>
+ 
+ <insert id="save" parameterType="com.zbiti.etl.extend.vo.ConvertStep">
+		insert into ETL_CONVERT_STEP (STEP_ID,SUPER_CLASS,CHARSET)
+			values (#{stepId}, #{superClass}, #{charset})
+ </insert>
+ 
+ <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_CONVERT_STEP WHERE STEP_ID = #{stepId}
+ </delete>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.ConvertStep">
+	update ETL_CONVERT_STEP set
+		SUPER_CLASS=#{superClass},CHARSET=#{charset}
+		where STEP_ID=#{stepId}
+ </update>
+
+</mapper>

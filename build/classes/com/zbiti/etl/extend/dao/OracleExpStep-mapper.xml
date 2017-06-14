@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.OracleExpStepDao">
+
+	<select id="getOracleExpStepByStepId" parameterType="String"
+		resultMap="OracleExpStep.OracleExpStepResultMap" resultType="com.zbiti.etl.extend.vo.OracleExpStep">
+		select
+		es.*,ess.*
+		from ETL_STEP es
+		inner join ETL_ORACLE_EXP_STEP ess on es.STEP_ID = ess.STEP_ID
+		WHERE es.STEP_ID = #{stepId}
+ 	</select>
+
+	<insert id="save">
+		insert into ETL_ORACLE_EXP_STEP
+		(STEP_ID,RESOURCE_NAME,SQLS,FILENAME,FILE_TIME_OFFSET)
+		values (#{stepId}, #{resourceName}, #{sqls},#{filename},#{fileTimeOffset})
+   </insert>
+
+	<update id="update">
+		update ETL_ORACLE_EXP_STEP
+		set
+		STEP_ID=#{stepId},RESOURCE_NAME=#{resourceName},SQLS=#{sqls},FILENAME=#{filename},FILE_TIME_OFFSET=#{fileTimeOffset}
+		where STEP_ID=#{stepId}
+   </update>
+
+	<delete id="delete" parameterType="String">
+		DELETE FROM ETL_ORACLE_EXP_STEP WHERE STEP_ID = #{stepId}
+   </delete>
+
+</mapper>

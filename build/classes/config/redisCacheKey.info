@@ -1,0 +1,17 @@
+#redis缓存键
+#对象 key 若传入的key为null则表示处理所有
+Node nodeCode
+Scene sceneId
+Step.FirstStep sceneId
+Step.ListByNode nodeCode
+Step.ListByCluster cluster
+Step.ListByScene sceneId
+Step.ListPreStep stepId
+Step stepId
+step.ListNextStep stepId
+FinderStep stepId
+SourceFileDir.ListByStep stepId
+IQLoadStep stepId
+OracleLoadStep stepId
+SqlStep stepId
+FileUpStep stepId

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+
+<mapper namespace="com.zbiti.etl.extend.dao.EtlUserDao">
+
+ <select id="getByUsername" parameterType="String" resultMap="EtlUser.EtlUserResultMap" resultType="com.zbiti.etl.extend.vo.EtlUser">
+	 select 
+	       USERNAME,PASSWORD
+	 from etl_user WHERE username = #{username}
+ </select>
+
+ <select id="qryEtlUser" parameterType="java.util.Map" resultType="java.util.Map">
+ select 
+       USERNAME,PASSWORD
+ from ETL_USER ORDER BY USERNAME DESC
+ </select>
+ 
+  <select id="selectEtlUserListPage" parameterType="java.util.Map" resultMap="EtlUser.EtlUserResultMap" resultType="java.util.Map">
+ select 
+       USERNAME,PASSWORD
+ from ETL_USER ORDER BY USERNAME DESC
+ </select>
+ 
+  <delete id="delete" parameterType="String">
+ 	DELETE FROM ETL_USER WHERE USERNAME = #{username}
+ </delete>
+ 
+  <insert id="save" parameterType="com.zbiti.etl.extend.vo.EtlUser">
+		insert into ETL_USER (USERNAME,PASSWORD)
+			values (#{username}, #{password})
+ </insert>
+ 
+ <update id="update" parameterType="com.zbiti.etl.extend.vo.EtlUser">
+		update etl_user
+			set 
+				username=#{username},password=#{password}
+		where username=#{username}
+ </update>
+ 
+</mapper>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="KettleStep">
+	<resultMap id="KettleStepResultMap" extends="Step.StepResultMap" type="com.zbiti.etl.extend.vo.KettleStep" >
+		<result property="kettleType" column="KETTLE_TYPE"/>
+		<result property="kettleFileName" column="KETTLE_FILE_NAME"/>
+		<result property="kettleFileStream" column="KETTLE_FILE_STREAM" jdbcType="BLOB" />
+	</resultMap>
+</mapper>

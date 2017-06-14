@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace和定义的Mapper接口对应，并实现其中的方法 -->
+<mapper namespace="com.zbiti.etl.core.dao.ServerClusterDao">
+	<!-- id和mapper接口中的方法名对应 -->
+	<!-- 根据节点编码查找节点,获取节点的同时要附带获取节点提供的容器Node2Container -->
+	<select id="getById" parameterType="java.util.Map" resultMap="ServerCluster.ServerClusterResultMap" >
+		SELECT S.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH,S.ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,Z.ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME
+		FROM ETL_SERVER_CLUSTER S LEFT JOIN ETL_ZOOKEEPER_CLUSTER Z
+		ON S.ZOOKEEPER_CLUSTER_CODE = Z.ZOOKEEPER_CLUSTER_CODE WHERE S.SERVER_SLUSTER_ID = #{serverClusterId}
+	</select>
+	
+	<select id="selectServerFarmListPage" parameterType="java.util.Map" resultMap="ServerCluster.ServerClusterResultMap" >
+		SELECT S.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH,NVL(N.CN,0) AS NODE_NUMBER,S.ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,Z.ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME
+		FROM ETL_SERVER_CLUSTER S LEFT JOIN 
+		(SELECT SERVER_SLUSTER_ID,COUNT(NODE_CODE) AS CN FROM ETL_NODE GROUP BY SERVER_SLUSTER_ID) N
+		ON S.SERVER_SLUSTER_ID = N.SERVER_SLUSTER_ID 
+		LEFT JOIN ETL_ZOOKEEPER_CLUSTER Z ON S.ZOOKEEPER_CLUSTER_CODE = Z.ZOOKEEPER_CLUSTER_CODE
+		WHERE 1=1
+		<if test="serverClusterName!=null and serverClusterName!=''">
+			AND S.SERVER_SLUSTER_NAME LIKE '%'||#{serverClusterName}||'%'
+		</if>
+		<if test="zookeeperCode!=null and zookeeperCode!=''">
+			AND S.ZOOKEEPER_CLUSTER_CODE = #{zookeeperCode}
+		</if>
+	 	ORDER BY S.SERVER_SLUSTER_ID DESC
+	</select>
+	
+	<select id="queryServerClusterList" parameterType="java.util.Map" resultMap="ServerCluster.ServerClusterResultMap" >
+		SELECT S.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH,S.ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,Z.ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME
+		FROM ETL_SERVER_CLUSTER S 
+		LEFT JOIN ETL_ZOOKEEPER_CLUSTER Z ON S.ZOOKEEPER_CLUSTER_CODE = Z.ZOOKEEPER_CLUSTER_CODE WHERE 1=1
+		<if test="serverClusterName!=null and serverClusterName!=''">
+			AND S.SERVER_SLUSTER_NAME LIKE '%'||#{serverClusterName}||'%'
+		</if>
+		<if test="zookeeperCode!=null and zookeeperCode!=''">
+			AND S.ZOOKEEPER_CLUSTER_CODE = #{zookeeperCode}
+		</if>
+	 	ORDER BY S.SERVER_SLUSTER_ID DESC
+	</select>
+	
+	<insert id="save" parameterType="com.zbiti.etl.core.vo.ServerCluster">
+		insert into ETL_SERVER_CLUSTER(SERVER_SLUSTER_ID,SERVER_SLUSTER_NAME,ZOOKEEPER_CLUSTER_CODE,ROOT_PATH)
+		values((select (nvl(max(server_sluster_id),0) + 1) from ETL_SERVER_CLUSTER),#{serverClusterName},#{zookeeperCluster.zookeeperCode},#{rootPath})
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ETL_SERVER_CLUSTER where SERVER_SLUSTER_ID in (${serverClusterId})
+	</delete>
+	
+	<update id="update" parameterType="com.zbiti.etl.core.vo.ServerCluster">
+		update ETL_SERVER_CLUSTER
+		set SERVER_SLUSTER_NAME=#{serverClusterName},ZOOKEEPER_CLUSTER_CODE=#{zookeeperCluster.zookeeperCode},
+			ROOT_PATH=#{rootPath}
+		where SERVER_SLUSTER_ID=#{serverClusterId}
+	</update>
+	
+	<select id="queryServerClusterByName" parameterType="java.lang.String" resultMap="ServerCluster.ServerClusterResultMap">
+		SELECT S.SERVER_SLUSTER_ID,S.SERVER_SLUSTER_NAME,S.ROOT_PATH,S.ZOOKEEPER_CLUSTER_CODE AS ZOOKEEPER_CODE,Z.ZOOKEEPER_CLUSTER_NAME AS ZOOKEEPER_NAME
+		FROM ETL_SERVER_CLUSTER S LEFT JOIN ETL_ZOOKEEPER_CLUSTER Z
+		ON S.ZOOKEEPER_CLUSTER_CODE = Z.ZOOKEEPER_CLUSTER_CODE WHERE S.SERVER_SLUSTER_NAME = #{clusterName}
+	</select>
+</mapper>
