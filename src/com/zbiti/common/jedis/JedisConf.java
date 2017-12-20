@@ -6,9 +6,7 @@ import java.util.Properties;
 
 public class JedisConf {
 
-	//static RedisConf redisConf = new RedisConf();
 	static Map<String,JedisConf> redisConfMap = new HashMap<String,JedisConf>();
-	
 	
 	String key;
 	

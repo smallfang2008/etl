@@ -69,7 +69,8 @@ public class JedisManager {
 		initJedisPool();
 	}
 	
-	public JedisManager(String ip,int port){//为了不破坏原有的资源获取
+	public JedisManager(String ip,int port){
+		//为了不破坏原有的资源获取
 		JedisConf redisConf = JedisConf.getInstance(null);
 		JedisPoolConfig jedisPoolconfig = new JedisPoolConfig();
 		jedisPoolconfig.setMaxActive(redisConf.getMaxActive());
@@ -78,26 +79,23 @@ public class JedisManager {
 		jedisPoolconfig.setTestOnBorrow(redisConf.isTestOnBorrow());
         jedisPool = new JedisPool(jedisPoolconfig, ip, port,redisConf.getTimeOut());
 	}
-	
+	/**
+	 * 从jedisPool中获取jedis
+	 * @return
+	 */
 	public Jedis getJedis(){
 		Jedis jedis=jedisPool.getResource();
 		return jedis;
 	}
 	
+	/**
+	 * 将jedis放回jedisPool
+	 * @param jedis
+	 */
 	public void returnJedis(Jedis jedis){
 		jedisPool.returnBrokenResource(jedis);
 		jedisPool.returnResource(jedis);
 		//jedisPool.returnBrokenResource(redisDao.getJedis());
 	}
 	
-	
-	/*
-	public static void main(String [] args){
-		RedisManager.getInstance().getRedisDao().incrBy("key_1", "1");
-		RedisManager.getInstance().getRedisDao().incrBy("key_1", "1");
-		RedisManager.getInstance().getRedisDao().incrBy("key_1", "1");
-		RedisManager.getInstance().getRedisDao().incrBy("key_1", "1");
-		RedisManager.getInstance().getRedisDao().incrBy("key_1", "1");
-	}
-	*/
 }

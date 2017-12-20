@@ -63,12 +63,11 @@
 <!--        <property name="username" value="etl_new"></property>-->
 <!--        <property name="password" value="etl_new"></property>-->
 <!--    </bean> -->
-	<bean id="DevDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-        destroy-method="close">
+	<bean id="DevDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-        <property name="url" value="jdbc:oracle:thin:@132.228.68.41:1521:etl"></property>
-        <property name="username" value="etl_new"></property>
-        <property name="password" value="etl_new"></property>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl"></property>
+        <property name="username" value="scott"></property>
+        <property name="password" value="admin"></property>
         <property name="maxWait" value="600"/>
         <property name="minIdle" value="5"/>
         <property name="maxIdle" value="10"/>

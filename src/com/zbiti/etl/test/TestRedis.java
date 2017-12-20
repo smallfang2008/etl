@@ -7,11 +7,11 @@ import com.zbiti.common.jedis.JedisManager;
 public class TestRedis {
 
 	public static void main(String[] args) {
-		JedisManager jedisManager=JedisManager.getInstanceByIpPort("132.228.241.94:10380");
+		JedisManager jedisManager=JedisManager.getInstanceByIpPort("127.0.0.1:6379");
 		Jedis jedis=jedisManager.getJedis();
-		jedis.set("1","1");
+		jedis.set("runoobkey","runoobkey");
 		System.out.println(jedis.keys("*"));
-		jedis.del("1");
+//		jedis.del("runoobkey");
 		jedisManager.returnJedis(jedis);
 		
 	}
